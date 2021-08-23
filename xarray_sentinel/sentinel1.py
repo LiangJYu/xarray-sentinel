@@ -325,8 +325,16 @@ def open_burst_dataset(
     chunks: T.Optional[T.Union[int, T.Dict[str, int]]] = None,
 ) -> xr.Dataset:
     product_attrs, product_files = esa_safe.parse_manifest_sentinel1(manifest_path)
+
     image_information = esa_safe.parse_image_information(annotation_path)
-    procduct_information = esa_safe.parse_product_information(annotation_path)
+    product_attrs['slantRangeTime'] = image_information['slantRangeTime']
+
+    product_information = esa_safe.parse_product_information(annotation_path)
+    product_attrs['radarFrequency'] = product_information['radarFrequency']
+    product_attrs['rangeSamplingRate'] = product_information['rangeSamplingRate']
+
+    downlink_information = esa_safe.parse_downlink_information(annotation_path)
+    product_attrs['prf'] = downlink_information['prf']
 
     swath_timing = esa_safe.parse_swath_timing(annotation_path)
     linesPerBurst = swath_timing["linesPerBurst"]
@@ -335,6 +343,7 @@ def open_burst_dataset(
     first_azimuth_time = pd.to_datetime(
         swath_timing["burstList"]["burst"][burst_position]["azimuthTime"]
     )
+    product_attrs['sensingStart'] = first_azimuth_time
     azimuth_time_interval = pd.to_timedelta(
         image_information["azimuthTimeInterval"], "s"
     )
@@ -343,7 +352,7 @@ def open_burst_dataset(
     )
 
     slantRangeTime = image_information["slantRangeTime"]
-    slant_range_sampling = 1 / procduct_information["rangeSamplingRate"]
+    slant_range_sampling = 1 / product_information["rangeSamplingRate"]
 
     slant_range_time = np.linspace(
         slantRangeTime,

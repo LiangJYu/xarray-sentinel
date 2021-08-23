@@ -101,6 +101,10 @@ def parse_swath_timing(annotation_path: PathType) -> T.Dict[str, T.Any]:
     return parse_tag_dict(annotation_path, "product", ".//swathTiming")
 
 
+def parse_downlink_information(annotation_path: PathType) -> T.Dict[str, T.Any]:
+    return parse_tag_dict(annotation_path, "product", ".//downlinkInformation")
+
+
 @functools.lru_cache()
 def parse_product_information(annotation_path: PathType) -> T.Dict[str, T.Any]:
     return parse_tag_dict(annotation_path, "product", ".//productInformation")
