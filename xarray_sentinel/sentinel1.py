@@ -327,6 +327,7 @@ def open_burst_dataset(
     product_attrs, product_files = esa_safe.parse_manifest_sentinel1(manifest_path)
 
     image_information = esa_safe.parse_image_information(annotation_path)
+    product_attrs['azimuthTimeInterval'] = image_information['azimuthTimeInterval']
     product_attrs['slantRangeTime'] = image_information['slantRangeTime']
 
     product_information = esa_safe.parse_product_information(annotation_path)
